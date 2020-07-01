@@ -11,3 +11,6 @@ final kShadowColor = Color(0xFFD3D3D3).withOpacity(.84);
 Color colorListen = Colors.redAccent;
 Color colorNotListen = Colors.greenAccent;
 const IconData iconDataListen = Icons.record_voice_over;
+
+
+const iconRecorded = Icon(Icons.done_all, color: Colors.greenAccent);

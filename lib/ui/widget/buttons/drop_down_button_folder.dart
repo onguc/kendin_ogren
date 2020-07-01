@@ -2,27 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:kendin_ogren/model/folder.dart';
 import 'package:kendin_ogren/repo/folder_repo.dart';
 
-class FolderDropDownButton extends StatefulWidget {
-  FolderDropDownButton();
+class DropDownButtonFolder extends StatefulWidget {
+  DropDownButtonFolder();
+
+  Folder _selectedFolder;
+
+  Future<Folder> selectedFolder() async {
+    if (_selectedFolder == null)
+      return await _selectedFolder;
+    else {
+      return _selectedFolder;
+    }
+  }
 
   @override
-  _FolderDropDownButtonState createState() => _FolderDropDownButtonState();
+  _DropDownButtonFolderState createState() => _DropDownButtonFolderState();
 }
 
-class _FolderDropDownButtonState extends State<FolderDropDownButton> {
-  List<Folder> folderList;
-  Folder selectedFolder;
+class _DropDownButtonFolderState extends State<DropDownButtonFolder> {
+  List<DropdownMenuItem<Folder>> dropDownMenuOptions = [];
 
   @override
-  void initState() {
-    FolderRepo folderRepo = FolderRepo();
-    setState(() async {
-      folderList = await folderRepo.getAll();
-      if (folderList == null) {
-      } else {
-        selectedFolder = folderList[0];
-      }
-    });
+  Future<void> initState() {
+    fillFolderList();
     super.initState();
   }
 
@@ -30,10 +32,9 @@ class _FolderDropDownButtonState extends State<FolderDropDownButton> {
   Widget build(BuildContext context) {
     return DropdownButton<Folder>(
         isExpanded: true,
-        itemHeight: kMinInteractiveDimension,
-        value: selectedFolder,
+        value: widget._selectedFolder,
         icon: Icon(Icons.arrow_drop_down),
-        iconSize: 24,
+        iconSize: 34,
         elevation: 54,
         underline: Container(
           height: 1,
@@ -41,22 +42,39 @@ class _FolderDropDownButtonState extends State<FolderDropDownButton> {
         ),
         onChanged: (Folder data) {
           setState(() {
-            selectedFolder = data;
+            widget._selectedFolder = data;
           });
         },
-        items: folderList.map<DropdownMenuItem<Folder>>((Folder folder) {
-          return DropdownMenuItem<Folder>(
-            value: folder,
-            child: Text(folder.name),
-          );
-        }).toList());
+        items: dropDownMenuOptions);
   }
 
-  Future<List<Folder>> getRepo() async {
+  fillFolderList() async {
     FolderRepo folderRepo = FolderRepo();
     List<Folder> folders = await folderRepo.getAll();
-    if (folders == null) {
-    } else {}
-    return folders;
+    setState(() {
+      if (folders == null) {
+        folders = [];
+      } else {
+        widget._selectedFolder = folders[0];
+      }
+
+      dropDownMenuOptions =
+          folders.map<DropdownMenuItem<Folder>>((Folder folder) {
+        return DropdownMenuItem<Folder>(
+          value: folder,
+          child: Text(folder.name),
+        );
+      }).toList();
+    });
+//    List<Folder> folders = [];
+//    Folder folder1 = Folder();
+//    folder1.id = 1;
+//    folder1.name = 'test1';
+//    folders.add(folder1);
+//
+//    Folder folder2 = Folder();
+//    folder2.id = 2;
+//    folder2.name = 'test2';
+//    folders.add(folder2);
   }
 }
